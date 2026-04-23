@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Python Terminal - Moaz</title>
+
+<style>
+body {
+    margin: 0;
+    background: #000;
+    font-family: "JetBrains Mono", monospace;
+    color: #c9d1d9;
+    overflow: hidden;
+}
+
+/* ===== BOOT ===== */
+#boot {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    z-index: 9999;
+    transition: opacity 1s ease;
+}
+
+.scanlines {
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(255,255,255,0.03) 0px,
+        rgba(255,255,255,0.03) 1px,
+        transparent 2px,
+        transparent 4px
+    );
+    animation: flicker 0.15s infinite;
+}
+
+@keyframes flicker {
+    0%,100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.glitch {
+    font-size: 20px;
+    position: relative;
+}
+
+.glitch::before,
+.glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    left: 0;
+}
+
+.glitch::before {
+    color: red;
+    transform: translateX(-2px);
+}
+
+.glitch::after {
+    color: cyan;
+    transform: translateX(2px);
+}
+
+/* ===== TERMINAL ===== */
+#terminal {
+    display: none;
+    height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+    background: radial-gradient(circle at center, #0d1117, #000);
+    position: relative;
+}
+
+.glow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle, rgba(255,255,255,0.03), transparent);
+    pointer-events: none;
+}
+
+#out {
+    white-space: pre-wrap;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* INPUT */
+.input-line {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.prompt {
+    color: #7ee787;
+}
+
+input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #c9d1d9;
+    font-family: inherit;
+    font-size: 14px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- BOOT SCREEN -->
+<div id="boot">
+    <div class="scanlines"></div>
+    <div class="glitch" data-text="Loading Python Terminal...">
+        Loading Python Terminal...
+    </div>
+</div>
+
+<!-- TERMINAL -->
+<div id="terminal">
+    <div class="glow"></div>
+
+    <div id="out"></div>
+
+    <div class="input-line">
+        <span class="prompt">moaz@python:~$</span>
+        <input id="cmd" autofocus autocomplete="off" />
+    </div>
+</div>
+
+<script>
+
+const boot = document.getElementById("boot");
+const terminal = document.getElementById("terminal");
+const out = document.getElementById("out");
+const input = document.getElementById("cmd");
+
+const bootLines = [
+"boot sequence... OK",
+"loading python runtime... OK",
+"initializing terminal... OK",
+"",
+"Welcome, Moaz",
+"Python Developer Environment Ready",
+"",
+"type 'help' for commands"
+];
+
+let i = 0;
+
+function typeBoot() {
+    if (i < bootLines.length) {
+        out.innerHTML += bootLines[i] + "\n";
+        i++;
+        setTimeout(typeBoot, 100);
+    }
+}
+
+/* BOOT TRANSITION */
+setTimeout(() => {
+    boot.style.opacity = 0;
+
+    setTimeout(() => {
+        boot.style.display = "none";
+        terminal.style.display = "block";
+        typeBoot();
+    }, 900);
+
+}, 2500);
+
+/* COMMAND SYSTEM */
+function run(cmd) {
+
+    out.innerHTML += `\nmoaz@python:~$ ${cmd}\n`;
+
+    switch(cmd.trim()) {
+
+        case "help":
+            out.innerHTML += "commands: help, about, clear, python, projects\n";
+            break;
+
+        case "about":
+            out.innerHTML += "Moaz - Python Developer\nBackend • Automation • Tools\n";
+            break;
+
+        case "python":
+            out.innerHTML += ">>> Python shell not connected yet\n";
+            break;
+
+        case "clear":
+            out.innerHTML = "";
+            break;
+
+        case "projects":
+            out.innerHTML += "\nPROJECTS:\n";
+            out.innerHTML += "1. Fishing Macro (Hypixel Skyblock)\n";
+            out.innerHTML += "   type: open fishing\n";
+            break;
+
+        case "open fishing":
+            out.innerHTML += "opening project...\n";
+            window.open(
+                "https://github.com/3b3cin/fishing-macro-for-hypixel-skyblock/tree/main",
+                "_blank"
+            );
+            break;
+
+        default:
+            out.innerHTML += "command not found\n";
+    }
+}
+
+/* INPUT HANDLER */
+input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+        run(input.value);
+        input.value = "";
+    }
+});
+
+</script>
+
+</body>
+</html>
