@@ -1,1 +1,2 @@
 # school-project
+BEFORE YOU LOOK AT THE CODE OPEN THE PAGE HERE: 
